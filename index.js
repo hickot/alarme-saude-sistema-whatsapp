@@ -4,13 +4,6 @@ const fs = require('fs');
 // Caminho do arquivo onde será salvo
 const caminhoArquivo = './data-hora-saude-sistema.txt';
 
-// ===============================
-// Configurações de moedas e alertas
-// ===============================
-const MOEDAS = [
-  { symbol: "BTCUSDT", limite: 109532.16 },
-];
-
 const INTERVALO = 30 * 1000; // Checagem a cada minuto
 
 const repeticoes = 3;
@@ -44,55 +37,49 @@ function formatarDataLocal(date) {
 // Monitoramento Binance
 // ===============================
 async function rotina() {
-
-  console.log("🔍 Monitorando moedas:");
-  MOEDAS.forEach(m => console.log(` - ${m.symbol} <= ${m.limite}`));
   console.log("");
-
   setInterval(async () => {
-    for (const moeda of MOEDAS) {
-      try {
+    try {
 
-        contador = contador + 1
+      contador = contador + 1
 
-        const mensagem = 'Sistema em funcionamento... ';
+      const mensagem = 'Sistema em funcionamento... ';
 
-        // Ler a data salva no arquivo
-        const conteudo = fs.readFileSync(caminhoArquivo, 'utf8');
-        const inicio = new Date(conteudo);
-        console.log('data inicio:', inicio);
+      // Ler a data salva no arquivo
+      const conteudo = fs.readFileSync(caminhoArquivo, 'utf8');
+      const inicio = new Date(conteudo);
+      console.log('data inicio:', inicio);
 
-        // Data atual como objeto Date
-        const fim = new Date();
-        console.log('data atual:', fim);
+      // Data atual como objeto Date
+      const fim = new Date();
+      console.log('data atual:', fim);
 
-        // Diferença em milissegundos
-        const diffMs = fim.getTime() - inicio.getTime();
-        console.log('diffMs:', diffMs);
+      // Diferença em milissegundos
+      const diffMs = fim.getTime() - inicio.getTime();
+      console.log('diffMs:', diffMs);
 
-        // Verifica se já passou o intervalo (ex: 30 minutos)
-        const interval = 60 * 60 * 1000; // 60 minutos em ms
-        console.log('intervalo: ', interval);
+      // Verifica se já passou o intervalo (ex: 30 minutos)
+      const interval = 60 * 60 * 1000; // 60 minutos em ms
+      console.log('intervalo: ', interval);
 
-        if (diffMs >= interval) {
-        console.log('✅ Passou o interval, enviando mensagem');
+      if (diffMs >= interval) {
+      console.log('✅ Passou o interval, enviando mensagem');
 
-        // Atualiza o arquivo com a data e hora no horário local
-        const dataHoraFormatada = formatarDataLocal(fim);
-        fs.writeFileSync(caminhoArquivo, dataHoraFormatada, 'utf8');
-        console.log('✅ Data e hora atualizada no arquivo!');
+      // Atualiza o arquivo com a data e hora no horário local
+      const dataHoraFormatada = formatarDataLocal(fim);
+      fs.writeFileSync(caminhoArquivo, dataHoraFormatada, 'utf8');
+      console.log('✅ Data e hora atualizada no arquivo!');
 
-        // Chama a função de envio
-        const { send } = require('./whatsapp');
-        await send('Douglas Alvares', mensagem);
-        }
-
-          console.log('Contador: ', contador);
-        
-      } catch (err) {
-        
-        console.error(`❌ Erro consultando ${moeda.symbol}:`, err && err.message ? err.message : err);
+      // Chama a função de envio
+      const { send } = require('./whatsapp');
+      await send('Douglas Alvares', mensagem);
       }
+
+        console.log('Contador: ', contador);
+      
+    } catch (err) {
+      
+      console.error(`❌ Erro consultando ${moeda.symbol}:`, err && err.message ? err.message : err);
     }
   }, INTERVALO);
 }
