@@ -79,7 +79,7 @@ async function rotina() {
       
     } catch (err) {
       
-      console.error(`❌ Erro consultando ${moeda.symbol}:`, err && err.message ? err.message : err);
+      console.error(`❌ Erro consultando `, err && err.message ? err.message : err);
     }
   }, INTERVALO);
 }
